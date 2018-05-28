@@ -57,6 +57,7 @@ export default class FriendsList extends Component<Props> {
         return (
             <View style={styles.container}>
                 <FlatList
+                    testID='friendsList'
                     data={this.state.data}
                     ItemSeparatorComponent={() => <View style={styles.itemDivider}/>}
                     renderItem={({item}) =>

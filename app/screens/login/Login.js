@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, ActivityIndicator} from 'react-native';
+import {View, ActivityIndicator, Text} from 'react-native';
 import {styles} from './styles';
 import {navigatorStyle} from '../../common/navigation';
 import {Button} from "../../components/button/Button";
@@ -22,6 +22,7 @@ export default class Login extends Component<Props> {
             username: '',
             password: '',
             loading: false,
+            errorMessage: null,
         };
     }
 
@@ -38,11 +39,24 @@ export default class Login extends Component<Props> {
     }
 
     attemptSignIn(email, password) {
-        this.setState({loading: true});
-        firebase.auth().signInAndRetrieveDataWithEmailAndPassword(email, password).then(() => {
-            this.goToHomeScreen();
-            this.setState({loading: false});
-        }).catch(this.setState({loading: false}));
+        this.setState({errorMessage: null});
+
+        if (email === "" || password === "") {
+            this.setState({errorMessage: 'Please fill all fields.'});
+        } else {
+            this.setState({loading: true});
+            firebase.auth().signInAndRetrieveDataWithEmailAndPassword(email, password).then(() => {
+                this.goToHomeScreen();
+                this.setState({loading: false});
+            }).catch((error) => {
+                const {code, message} = error;
+                console.log(">>>>", code);
+                this.setState({loading: false});
+                //if (code === 'auth/wrong-password' || code === 'auth/user-not-found') {
+                    this.setState({errorMessage: 'Login failed.'});
+                //}
+            });
+        }
     }
 
     goToHomeScreen() {
@@ -63,16 +77,27 @@ export default class Login extends Component<Props> {
         return (
             <View style={styles.container}>
                 <TextField
+                    testID='emailInput'
                     hint={'Email'}
-                    onChangeText={(text) => {this.setState({username: text})}}/>
+                    onChangeText={(text) => {
+                        this.setState({errorMessage: null});
+                        this.setState({username: text})
+                    }}/>
                 <TextField
+                    testID='passwordInput'
                     hint={'Password'}
-                    onChangeText={(text) => {this.setState({password: text})}}
+                    onChangeText={(text) => {
+                        this.setState({errorMessage: null});
+                        this.setState({password: text})
+                    }}
                     isPassword={true}/>
+                {this.state.errorMessage && <Text style={{color: 'red'}}>{this.state.errorMessage}</Text>}
                 <Button
+                    testID='signInButton'
                     title={'Sign In'}
                     onPress={() => this.attemptSignIn(this.state.username, this.state.password)}/>
                 <LinkButton
+                    testID='signUpLink'
                     title={'Don\'t have an account? Sign up!'}
                     onPress={() => this.goToSignUpScreen()}/>
                 <ActivityIndicator style={{padding: 30}} animating={this.state.loading}/>

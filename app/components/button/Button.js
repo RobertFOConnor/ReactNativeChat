@@ -6,8 +6,8 @@ import {
 } from 'react-native';
 import {styles} from "./styles";
 
-export const Button = ({onPress, title}) =>
-    <TouchableOpacity onPress={onPress}>
+export const Button = ({testID, onPress, title}) =>
+    <TouchableOpacity testID={testID} onPress={onPress}>
         <View style={styles.button}>
             <Text style={styles.buttonText}>{title}</Text>
         </View>

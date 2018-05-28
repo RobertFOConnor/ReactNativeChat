@@ -2,8 +2,9 @@ import React from 'react';
 import {TextInput} from 'react-native';
 import {styles} from "./styles";
 
-export const TextField = ({hint, onChangeText, isPassword}) =>
+export const TextField = ({testID, hint, onChangeText, isPassword}) =>
     <TextInput
+        testID={testID}
         style={styles.textInput}
         placeholder={hint}
         secureTextEntry={isPassword}
